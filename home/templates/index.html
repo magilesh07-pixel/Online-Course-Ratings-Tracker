@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Ratings Hub | Intelligence Dashboard</title>
+    <link rel="stylesheet" href="{% static 'home/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <p>Academic Performance Monitor</p>
+            <h1>Course Ratings Hub</h1>
+        </header>
+
+        <form method="POST" class="rating-form">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="text" name="course_name" placeholder="Course Name (e.g. Advanced AI)" required>
+            </div>
+            <div class="input-group">
+                <input type="number" name="rating" placeholder="Rating (1-5)" min="1" max="5" required>
+            </div>
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-plus"></i> Add Metric
+            </button>
+        </form>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>COURSE IDENTIFIER</th>
+                        <th>RATING</th>
+                        <th style="text-align: right;">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td style="font-weight: 600;">{{ course.course_name }}</td>
+                        <td>
+                            <span class="rating-badge">
+                                {{ course.rating }} / 5
+                            </span>
+                        </td>
+                        <td style="text-align: right;" class="action-links">
+                            <a href="/delete_course/{{course.id}}">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                            No ratings found. Start by adding a course metric above.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="stats-bar">
+            <div class="avg-stat">
+                <div class="avg-value">{{ avg_rating|stringformat:".1f" }}</div>
+                <div class="avg-label">NETWORK<br>AVERAGE</div>
+            </div>
+            <a href="/pdf/" class="report-link">
+                <i class="fas fa-file-export"></i> Analytics Report
+            </a>
+        </footer>
+    </div>
+
+</body>
+
+</html>
